@@ -1,0 +1,278 @@
+text_red = 0.3568627450980392;
+text_green = 0.5137254901960784;
+text_blue = 0.4117647058823529;
+screen_width = Window.GetWidth();
+screen_height = Window.GetHeight();
+progress = 0.0;
+
+#----------------------------------------- Matrix ---------------------------------
+font = "PxPlus IBM BIOS-2y 12";
+matrix.x = 50;
+matrix.y = 30;
+matrix.image = Image.Text("", text_red, text_green, text_blue, 1, font);
+matrix.sprite = Sprite();
+matrix.sprite.SetImage(matrix.image);
+matrix.sprite.SetPosition(matrix.x, matrix.y, 10000);
+time = 0.0;
+matrix.anim_start = 50.0;
+matrix.end = 74;
+matrix.step = 3;
+matrix.text = [];
+matrix.text[0] = "";
+matrix.text[1] = "W";
+matrix.text[2] = "Wa";
+matrix.text[3] = "Wak";
+matrix.text[4] = "Wake";
+matrix.text[5] = "Wake u";
+matrix.text[6] = "Wake up";
+matrix.text[7] = "Wake up,";
+matrix.text[8] = "Wake up, N";
+matrix.text[9] = "Wake up, Ne";
+matrix.text[10] = "Wake up, Neo";
+matrix.text[11] = "Wake up, Neo.";
+matrix.text[12] = "Wake up, Neo..";
+matrix.text[13] = "Wake up, Neo...";
+matrix.text[14] = "Wake up, Neo...";
+matrix.text[15] = "Wake up, Neo...";
+matrix.text[16] = "Wake up, Neo...";
+matrix.text[17] = "Wake up, Neo...";
+matrix.text[18] = "Wake up, Neo...";
+matrix.text[19] = "Wake up, Neo...";
+matrix.text[20] = "Wake up, Neo...";
+matrix.text[21] = "Wake up, Neo...";
+matrix.text[22] = "Wake up, Neo...";
+matrix.text[23] = "T";
+matrix.text[24] = "Th";
+matrix.text[25] = "The";
+matrix.text[26] = "The M";
+matrix.text[27] = "The Ma";
+matrix.text[28] = "The Mat";
+matrix.text[29] = "The Matr";
+matrix.text[30] = "The Matri";
+matrix.text[31] = "The Matrix";
+matrix.text[32] = "The Matrix h";
+matrix.text[33] = "The Matrix ha";
+matrix.text[34] = "The Matrix has";
+matrix.text[35] = "The Matrix has y";
+matrix.text[36] = "The Matrix has yo";
+matrix.text[37] = "The Matrix has you";
+matrix.text[38] = "The Matrix has you.";
+matrix.text[39] = "The Matrix has you..";
+matrix.text[40] = "The Matrix has you...";
+matrix.text[41] = "The Matrix has you...";
+matrix.text[42] = "The Matrix has you...";
+matrix.text[43] = "The Matrix has you...";
+matrix.text[44] = "F";
+matrix.text[45] = "Fo";
+matrix.text[46] = "Fol";
+matrix.text[47] = "Foll";
+matrix.text[48] = "Follo";
+matrix.text[49] = "Follow";
+matrix.text[50] = "Follow t";
+matrix.text[51] = "Follow th";
+matrix.text[52] = "Follow the";
+matrix.text[53] = "Follow the w";
+matrix.text[54] = "Follow the wh";
+matrix.text[55] = "Follow the whi";
+matrix.text[56] = "Follow the whit";
+matrix.text[57] = "Follow the white";
+matrix.text[58] = "Follow the white r";
+matrix.text[59] = "Follow the white ra";
+matrix.text[60] = "Follow the white rab";
+matrix.text[61] = "Follow the white rabb";
+matrix.text[62] = "Follow the white rabbi";
+matrix.text[63] = "Follow the white rabbit";
+matrix.text[64] = "Follow the white rabbit.";
+matrix.text[65] = "Follow the white rabbit.";
+matrix.text[66] = "Follow the white rabbit.";
+matrix.text[67] = "Follow the white rabbit.";
+matrix.text[68] = "Follow the white rabbit.";
+matrix.text[69] = "Follow the white rabbit.";
+matrix.text[70] = "Follow the white rabbit.";
+matrix.text[71] = "Follow the white rabbit.";
+matrix.text[72] = "Follow the white rabbit.";
+matrix.text[73] = "Follow the white rabbit.";
+matrix.text[74] = "Knock, knock, Neo.";
+
+matrix.lastindex = 0;
+
+fun refresh_callback ()
+{
+ time++;
+ index = Math.Clamp(time - matrix.anim_start, 0, 99999);
+ index = Math.Int(Math.Clamp(index / matrix.step, 0, matrix.end));
+ if (index > matrix.lastindex){
+  text = Plymouth.GetMode();
+  if (Plymouth.GetMode () == "boot")
+  {
+    text = matrix.text[index];
+  }
+  matrix.image = Image.Text(text, text_red, text_green, text_blue, 1, font);
+  matrix.sprite.SetImage(matrix.image);
+ }
+}
+Plymouth.SetRefreshFunction (refresh_callback);
+#----------------------------------------- Message --------------------------------
+LINE_WIDTH=130;
+
+message_sprites = [];
+message_sprite_min_y = 300;
+message_sprite_max_y = screen_height - 100;
+font_height = Image.Text("Test", 1, 1, 1, 1, font).GetHeight();
+message_sprite_span = message_sprite_max_y - message_sprite_min_y;
+NUM_SCROLL_LINES = Math.Int(message_sprite_span / font_height);
+
+// Initialising text images and their positions
+// 20 is the height (including line spacing) of each line
+for (i=0; i < NUM_SCROLL_LINES; i++) {
+  lines[i]= Image.Text("", 0, 0, 0);
+  message_sprite[i] = Sprite();
+  message_sprite[i].SetPosition(100, message_sprite_min_y + 2 + (i * font_height), 10000);
+}
+
+// From ubuntu-logo
+fun StringLength(string) {
+
+  index = 0;
+  str = String(string);
+  while(str.CharAt(index)) index++;
+  return index;
+}
+
+fun scroll_message_callback(text) {
+
+   // Truncate the message if too long
+   if (StringLength(text) > LINE_WIDTH) {
+     text = text.SubString(0, LINE_WIDTH - 3);
+     text += "...";
+   }
+
+   // Shift message one up
+   for (i = 0; i < NUM_SCROLL_LINES - 1; i++) {
+     lines[i] = lines[i+1];
+   }
+
+   // Create the image for the latest message
+   lines[i] = Image.Text(text, text_red, text_green, text_blue, 1, font);
+
+   // Re-positioning the text images
+   for (i = 0; i < NUM_SCROLL_LINES; i++) {
+     message_sprite[i].SetImage(lines[i]);
+   }
+}
+
+Plymouth.SetDisplayMessageFunction(scroll_message_callback);
+#Plymouth.SetUpdateStatusFunction(scroll_message_callback);
+
+#----------------------------------------- Dialogue --------------------------------
+
+status = "normal";
+
+fun dialog_setup()
+  {
+    local.box;
+    local.lock;
+    local.entry;
+    
+    box.image = Image("box.png");
+    lock.image = Image("lock.png");
+    entry.image = Image("entry.png");
+    
+    box.sprite = Sprite(box.image);
+    box.x = Window.GetX() + Window.GetWidth()  / 2 - box.image.GetWidth ()/2;
+    box.y = Window.GetY() + Window.GetHeight() / 2 - box.image.GetHeight()/2;
+    box.z = 10000;
+    box.sprite.SetPosition(box.x, box.y, box.z);
+    
+    lock.sprite = Sprite(lock.image);
+    lock.x = box.x + box.image.GetWidth()/2 - (lock.image.GetWidth() + entry.image.GetWidth()) / 2;
+    lock.y = box.y + box.image.GetHeight()/2 - lock.image.GetHeight()/2;
+    lock.z = box.z + 1;
+    lock.sprite.SetPosition(lock.x, lock.y, lock.z);
+    
+    entry.sprite = Sprite(entry.image);
+    entry.x = lock.x + lock.image.GetWidth();
+    entry.y = box.y + box.image.GetHeight()/2 - entry.image.GetHeight()/2;
+    entry.z = box.z + 1;
+    entry.sprite.SetPosition(entry.x, entry.y, entry.z);
+    
+    global.dialog.box = box;
+    global.dialog.lock = lock;
+    global.dialog.entry = entry;
+    global.dialog.bullet_image = Image("bullet.png");
+    dialog_opacity (1);
+  }
+    
+fun dialog_opacity(opacity)
+  {
+    dialog.box.sprite.SetOpacity (opacity);
+    dialog.lock.sprite.SetOpacity (opacity);
+    dialog.entry.sprite.SetOpacity (opacity);
+    for (index = 0; dialog.bullet[index]; index++)
+      {
+        dialog.bullet[index].sprite.SetOpacity(opacity);
+      }
+  }
+
+fun display_normal_callback ()
+  {
+    global.status = "normal";
+    if (global.dialog)
+      dialog_opacity (0);
+  }
+
+fun display_password_callback (prompt, bullets)
+  {
+    global.status = "password";
+    if (!global.dialog)
+	dialog_setup();
+    else
+	dialog_opacity(1);
+    for (index = 0; dialog.bullet[index] || index < bullets; index++)
+      {
+        if (!dialog.bullet[index])
+          {
+            dialog.bullet[index].sprite = Sprite(dialog.bullet_image);
+            dialog.bullet[index].x = dialog.entry.x + index * dialog.bullet_image.GetWidth();
+            dialog.bullet[index].y = dialog.entry.y + dialog.entry.image.GetHeight() / 2 - dialog.bullet_image.GetHeight() / 2;
+            dialog.bullet[index].z = dialog.entry.z + 1;
+            dialog.bullet[index].sprite.SetPosition(dialog.bullet[index].x, dialog.bullet[index].y, dialog.bullet[index].z);
+          }
+        if (index < bullets)
+          dialog.bullet[index].sprite.SetOpacity(1);
+        else
+          dialog.bullet[index].sprite.SetOpacity(0);
+      }
+  }
+
+Plymouth.SetDisplayNormalFunction(display_normal_callback);
+Plymouth.SetDisplayPasswordFunction(display_password_callback);
+
+#----------------------------------------- Progress Bar --------------------------------
+
+#progress_box.image = Image("progress_box.png");
+#progress_box.sprite = Sprite(progress_box.image);
+#
+#progress_box.x = screen_width  / 2 - progress_box.image.GetWidth() / 2;
+#progress_box.y = 250  - progress_box.image.GetHeight() / 2;
+#progress_box.sprite.SetPosition(progress_box.x, progress_box.y, 0);
+#
+#progress_bar.original_image = Image("progress_bar.png");
+#progress_bar.sprite = Sprite();
+#
+#progress_bar.x = screen_width  / 2 -        progress_bar.original_image.GetWidth() / 2;
+#progress_bar.y = 250 - progress_bar.original_image.GetHeight() / 2;
+#progress_bar.sprite.SetPosition(progress_bar.x, progress_bar.y, 1);
+#
+#fun progress_callback (duration, progress)
+#  {
+#    global.progress = progress;
+#    if (progress_bar.image.GetWidth () != Math.Int (progress_bar.original_image.GetWidth () * progress))
+#      {
+#        progress_bar.image = progress_bar.original_image.Scale(progress_bar.original_image.GetWidth(progress_bar.original_image) * progress, progress_bar.original_image.GetHeight());
+#        progress_bar.sprite.SetImage (progress_bar.image);
+#      }
+#  }
+#
+#Plymouth.SetBootProgressFunction(progress_callback);
+#

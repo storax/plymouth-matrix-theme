@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=Matrix
+Description=Matrix plugin.
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/matrix
+ScriptFile=/usr/share/plymouth/themes/matrix/matrix.script
